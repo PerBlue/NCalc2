@@ -189,57 +189,57 @@ namespace NCalc
 
         protected Dictionary<string, IEnumerator> ParameterEnumerators;
         protected Dictionary<string, object> ParametersBackup;
-
-        public Func<TResult> ToLambda<TResult>()
-        {
-            if (HasErrors())
-            {
-                throw new EvaluationException(Error);
-            }
-
-            if (ParsedExpression == null)
-            {
-                ParsedExpression = Compile(OriginalExpression, (Options & EvaluateOptions.NoCache) == EvaluateOptions.NoCache);
-            }
-
-            var visitor = new LambdaExpressionVistor(Parameters, Options);
-            ParsedExpression.Accept(visitor);
-
-            var body = visitor.Result;
-            if (body.Type != typeof(TResult))
-            {
-                body = System.Linq.Expressions.Expression.Convert(body, typeof(TResult));
-            }
-
-            var lambda = System.Linq.Expressions.Expression.Lambda<Func<TResult>>(body);
-            return lambda.Compile();
-        }
-
-        public Func<TContext, TResult> ToLambda<TContext, TResult>() where TContext : class
-        {
-            if (HasErrors())
-            {
-                throw new EvaluationException(Error);
-            }
-
-            if (ParsedExpression == null)
-            {
-                ParsedExpression = Compile(OriginalExpression, (Options & EvaluateOptions.NoCache) == EvaluateOptions.NoCache);
-            }
-
-            var parameter = System.Linq.Expressions.Expression.Parameter(typeof(TContext), "ctx");
-            var visitor = new LambdaExpressionVistor(parameter, Options);
-            ParsedExpression.Accept(visitor);
-
-            var body = visitor.Result;
-            if (body.Type != typeof (TResult))
-            {
-                body = System.Linq.Expressions.Expression.Convert(body, typeof (TResult));
-            }
-
-            var lambda = System.Linq.Expressions.Expression.Lambda<Func<TContext, TResult>>(body, parameter);
-            return lambda.Compile();
-        }
+//
+//        public Func<TResult> ToLambda<TResult>()
+//        {
+//            if (HasErrors())
+//            {
+//                throw new EvaluationException(Error);
+//            }
+//
+//            if (ParsedExpression == null)
+//            {
+//                ParsedExpression = Compile(OriginalExpression, (Options & EvaluateOptions.NoCache) == EvaluateOptions.NoCache);
+//            }
+//
+//            var visitor = new LambdaExpressionVistor(Parameters, Options);
+//            ParsedExpression.Accept(visitor);
+//
+//            var body = visitor.Result;
+//            if (body.Type != typeof(TResult))
+//            {
+//                body = System.Linq.Expressions.Expression.Convert(body, typeof(TResult));
+//            }
+//
+//            var lambda = System.Linq.Expressions.Expression.Lambda<Func<TResult>>(body);
+//            return lambda.Compile();
+//        }
+//
+//        public Func<TContext, TResult> ToLambda<TContext, TResult>() where TContext : class
+//        {
+//            if (HasErrors())
+//            {
+//                throw new EvaluationException(Error);
+//            }
+//
+//            if (ParsedExpression == null)
+//            {
+//                ParsedExpression = Compile(OriginalExpression, (Options & EvaluateOptions.NoCache) == EvaluateOptions.NoCache);
+//            }
+//
+//            var parameter = System.Linq.Expressions.Expression.Parameter(typeof(TContext), "ctx");
+//            var visitor = new LambdaExpressionVistor(parameter, Options);
+//            ParsedExpression.Accept(visitor);
+//
+//            var body = visitor.Result;
+//            if (body.Type != typeof (TResult))
+//            {
+//                body = System.Linq.Expressions.Expression.Convert(body, typeof (TResult));
+//            }
+//
+//            var lambda = System.Linq.Expressions.Expression.Lambda<Func<TContext, TResult>>(body, parameter);
+//            return lambda.Compile();
+//        }
 
         public object Evaluate()
         {

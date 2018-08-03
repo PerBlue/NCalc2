@@ -19,84 +19,84 @@ namespace NCalc.Tests
             }
         }
 
-        [Theory]
-        [InlineData("(4 * 12 / 7) + ((9 * 2) % 8)")]
-        [InlineData("5 * 2 = 2 * 5 && (1 / 3.0) * 3 = 1")]
-        public void Arithmetics(string formula)
-        {
-            var expression = new Expression(formula);
-            var lambda = expression.ToLambda<object>();
-
-            var m1 = Measure(() => expression.Evaluate());
-            var m2 = Measure(() => lambda());
-
-            PrintResult(formula, m1, m2);
-        }
-
-        [Theory]
-        [InlineData("[Param1] * 7 + [Param2]")]
-        public void ParameterAccess(string formula)
-        {
-            var expression = new Expression(formula);
-            var lambda = expression.ToLambda<Context, int>();
-
-            var context = new Context {Param1 = 4, Param2 = 9};
-            expression.Parameters["Param1"] = 4;
-            expression.Parameters["Param2"] = 9;
-
-            var m1 = Measure(() => expression.Evaluate());
-            var m2 = Measure(() => lambda(context));
-
-            PrintResult(formula, m1, m2);
-        }
-
-        [Theory]
-        [InlineData("[Param1] * 7 + [Param2]")]
-        public void DynamicParameterAccess(string formula)
-        {
-            var expression = new Expression(formula);
-            var lambda = expression.ToLambda<Context, int>();
-
-            var context = new Context { Param1 = 4, Param2 = 9 };
-            expression.EvaluateParameter += (name, args) =>
-            {
-                if (name == "Param1") args.Result = context.Param1;
-                if (name == "Param2") args.Result = context.Param2;
-            };
-
-            var m1 = Measure(() => expression.Evaluate());
-            var m2 = Measure(() => lambda(context));
-
-            PrintResult(formula, m1, m2);
-        }
-
-        [Theory]
-        [InlineData("Foo([Param1] * 7, [Param2])")]
-        public void FunctionWithDynamicParameterAccess(string formula)
-        {
-            var expression = new Expression(formula);
-            var lambda = expression.ToLambda<Context, int>();
-
-            var context = new Context { Param1 = 4, Param2 = 9 };
-            expression.EvaluateParameter += (name, args) =>
-            {
-                if (name == "Param1") args.Result = context.Param1;
-                if (name == "Param2") args.Result = context.Param2;
-            };
-            expression.EvaluateFunction += (name, args) =>
-            {
-                if (name == "Foo")
-                {
-                    var param = args.EvaluateParameters();
-                    args.Result = context.Foo((int) param[0], (int) param[1]);
-                }
-            };
-
-            var m1 = Measure(() => expression.Evaluate());
-            var m2 = Measure(() => lambda(context));
-
-            PrintResult(formula, m1, m2);
-        }
+//        [Theory]
+//        [InlineData("(4 * 12 / 7) + ((9 * 2) % 8)")]
+//        [InlineData("5 * 2 = 2 * 5 && (1 / 3.0) * 3 = 1")]
+//        public void Arithmetics(string formula)
+//        {
+//            var expression = new Expression(formula);
+//            var lambda = expression.ToLambda<object>();
+//
+//            var m1 = Measure(() => expression.Evaluate());
+//            var m2 = Measure(() => lambda());
+//
+//            PrintResult(formula, m1, m2);
+//        }
+//
+//        [Theory]
+//        [InlineData("[Param1] * 7 + [Param2]")]
+//        public void ParameterAccess(string formula)
+//        {
+//            var expression = new Expression(formula);
+//            var lambda = expression.ToLambda<Context, int>();
+//
+//            var context = new Context {Param1 = 4, Param2 = 9};
+//            expression.Parameters["Param1"] = 4;
+//            expression.Parameters["Param2"] = 9;
+//
+//            var m1 = Measure(() => expression.Evaluate());
+//            var m2 = Measure(() => lambda(context));
+//
+//            PrintResult(formula, m1, m2);
+//        }
+//
+//        [Theory]
+//        [InlineData("[Param1] * 7 + [Param2]")]
+//        public void DynamicParameterAccess(string formula)
+//        {
+//            var expression = new Expression(formula);
+//            var lambda = expression.ToLambda<Context, int>();
+//
+//            var context = new Context { Param1 = 4, Param2 = 9 };
+//            expression.EvaluateParameter += (name, args) =>
+//            {
+//                if (name == "Param1") args.Result = context.Param1;
+//                if (name == "Param2") args.Result = context.Param2;
+//            };
+//
+//            var m1 = Measure(() => expression.Evaluate());
+//            var m2 = Measure(() => lambda(context));
+//
+//            PrintResult(formula, m1, m2);
+//        }
+//
+//        [Theory]
+//        [InlineData("Foo([Param1] * 7, [Param2])")]
+//        public void FunctionWithDynamicParameterAccess(string formula)
+//        {
+//            var expression = new Expression(formula);
+//            var lambda = expression.ToLambda<Context, int>();
+//
+//            var context = new Context { Param1 = 4, Param2 = 9 };
+//            expression.EvaluateParameter += (name, args) =>
+//            {
+//                if (name == "Param1") args.Result = context.Param1;
+//                if (name == "Param2") args.Result = context.Param2;
+//            };
+//            expression.EvaluateFunction += (name, args) =>
+//            {
+//                if (name == "Foo")
+//                {
+//                    var param = args.EvaluateParameters();
+//                    args.Result = context.Foo((int) param[0], (int) param[1]);
+//                }
+//            };
+//
+//            var m1 = Measure(() => expression.Evaluate());
+//            var m2 = Measure(() => lambda(context));
+//
+//            PrintResult(formula, m1, m2);
+//        }
 
         private TimeSpan Measure(Action action)
         {
